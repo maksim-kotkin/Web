@@ -14,6 +14,8 @@
 2. [Event loop. Asyncio](./2.2-asyncio)
 3. [Aiohttp](./2.3-aiohttp)
 4. [Celery](./2.4-celery)
+5. [FastApi ч.1](./3.1-fast-api-1)
+6. [FastApi ч.2](./3.2-fast-api-2)
 
 ## Как сдавать задачи
 
