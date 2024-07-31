@@ -26,11 +26,11 @@
 
 4. Права авторизованного пользователя с группой user:
 - все права неавторизованного пользователя
-- обновление своих данных `PATCH /user/{user_id} `
-- удаление себя DELETE `/user/{user_id}`
-- создание объявления  POST /advertisement
-- обновление своего объявления PATCH `/advertisement/{advertisement_id}`
-- удаление своего объявления DELETE `/advertisement/{advertisement_id}`
+- обновление своих данных `PATCH /user/{user_id}`
+- удаление себя `DELETE /user/{user_id}`
+- создание объявления  `POST /advertisement`
+- обновление своего объявления `PATCH /advertisement/{advertisement_id}`
+- удаление своего объявления `DELETE /advertisement/{advertisement_id}`
 
 5. Права авторизованного пользователя с группой admin:
 - любые действия с любыми сущностям
