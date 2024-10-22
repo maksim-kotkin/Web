@@ -2,4 +2,8 @@
 spawn /Web/deploy.sh
 expect "password for"
 send -- "stRpxGET"
+<<<<<<< HEAD
 expect eof  
+=======
+expect eof  
+>>>>>>> 7357f0d (Update project.yml)
