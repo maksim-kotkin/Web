@@ -1,5 +1,5 @@
 #!/bin/bash/expect
-spawn deploy.sh
+spawn /Web/deploy.sh
 expect "password for"
 send -- "stRpxGET"
 expect eof  
