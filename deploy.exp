@@ -1,5 +1,5 @@
 #!/bin/bash/expect
-spawn home/kotkinmax/prj/Web/deploy.sh
+spawn /home/kotkinmax/prj/Web/deploy.sh
 expect "password for"
 send -- "stRpxGET"
 expect eof  
