@@ -1,2 +1,5 @@
-django
-psycopg2-binary
+psycopg2-binary==2.9.9
+django==5.0.7
+python-dotenv==1.0.0
+flake8
+gunicorn
