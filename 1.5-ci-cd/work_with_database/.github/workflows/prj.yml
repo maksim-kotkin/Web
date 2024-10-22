@@ -37,7 +37,7 @@ jobs:
         python-version: 3.12
       
     - name: Установка зависимостей
-      run: pip install -r requirements.txt
+      run: pip install -r /home/kotkinmax/prj/Web/1.5-ci-cd/work_with_database/requirements.txt
     
     - name: Линтинг кода
       run: flake8 --exclude env,main,phones
