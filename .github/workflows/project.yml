@@ -40,7 +40,7 @@ jobs:
       run: pip install -r 1.5-ci-cd/work_with_database/requirements.txt
     
     - name: Линтинг кода
-      run: flake8 --exclude 1.5-ci-cd/,2.4-celery/,/1.2-deploy/
+      run: flake8 --exclude 1.5-ci-cd/,2.4-celery/,1.2-deploy/
     
     - name: Тестирование
       run: python 1.5-ci-cd/work_with_database/manage.py test
