@@ -1,0 +1,7 @@
+name: Django test project
+
+on:
+    push:
+        branches: [new]
+
+
