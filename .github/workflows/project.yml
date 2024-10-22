@@ -37,13 +37,13 @@ jobs:
         python-version: 3.12
       
     - name: Установка зависимостей
-      run: pip install -r 1.5-ci-cd/work_with_database/requirements.txt.txt
+      run: pip install -r 1.5-ci-cd/work_with_database/requirements.txt
     
     - name: Линтинг кода
-      run: flake8 --exclude Web/1.5-ci-cd/work_with_database/env,Web/1.5-ci-cd/work_with_database/main,Web/1.5-ci-cd/work_with_database/phones
+      run: flake8 --exclude 1.5-ci-cd/work_with_database/env,1.5-ci-cd/work_with_database/main,1.5-ci-cd/work_with_database/phones
     
     - name: Тестирование
-      run: python Web/1.5-ci-cd/work_with_database/manage.py test
+      run: python 1.5-ci-cd/work_with_database/manage.py test
       env:
         PG_NAME: ${{ env.PG_NAME }}
         PG_USER: ${{ env.PG_USER }}
