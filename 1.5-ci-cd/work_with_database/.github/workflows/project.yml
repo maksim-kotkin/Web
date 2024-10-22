@@ -2,7 +2,7 @@ name: Django test project
 
 on: 
   push:
-    branches: [newflake ]
+    branches: [new ]
 
 jobs:
   testing:
@@ -50,16 +50,16 @@ jobs:
         PG_PASSWORD: ${{ env.PG_PASSWORD }}
         PG_HOST: ${{ env.PG_HOST }}
         PG_PORT: ${{ env.PG_PORT }}
-  deploy:
-    name: Доставка кода
-    needs: testing
-    runs-on: ubuntu-latest
-    steps:
-      - name: Запуск скрипта обновления
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: expect /opt/cicd_test/deploy.exp
+  # deploy:
+  #   name: Доставка кода
+  #   needs: testing
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Запуск скрипта обновления
+  #       uses: appleboy/ssh-action@master
+  #       with:
+  #         host: ${{ secrets.SSH_HOST }}
+  #         username: ${{ secrets.SSH_USERNAME }}
+  #         password: ${{ secrets.SSH_PASSWORD }}
+  #         script: expect /opt/cicd_test/deploy.exp
 
