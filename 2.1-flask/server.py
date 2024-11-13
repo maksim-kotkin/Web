@@ -1,27 +1,27 @@
 import flask
 from flask import jsonify, request
 from flask.views import MethodView
-from models import Advertisement, Session
+from models import User, Advertisement, Session
 from sqlalchemy.exc import IntegrityError
-from schema import  CreateAdvertisement, UpdateAdvertisement
+from schema import  CreateAdvertisement, UpdateAdvertisement, CreateUser, UpdateUser
 from pydantic import ValidationError
-# from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt
 
 
 app = flask.Flask('app')
-# bcrypt = Bcrypt(app)
+bcrypt = Bcrypt(app)
 
 
-# def hash_password(password:str):
-#     password = password.encode()
-#     password = bcrypt.generate_password_hash(password)
-#     password = password.decode()
-#     return password
+def hash_password(password:str):
+    password = password.encode()
+    password = bcrypt.generate_password_hash(password)
+    password = password.decode()
+    return password
 
-# def check_password(password: str, hashed_password: str):
-#     password = password.encode()
-#     hashed_password = hashed_password.encode()
-#     return bcrypt.check_password_hash(hashed_password, password)
+def check_password(password: str, hashed_password: str):
+    password = password.encode()
+    hashed_password = hashed_password.encode()
+    return bcrypt.check_password_hash(hashed_password, password)
     
 class HttpError(Exception):
     
@@ -58,19 +58,20 @@ def  after_request(http_response: flask.Response):
     return http_response
 
 
-# def add_user(user:Advertisement):
-#     try:
-#         request.session.add(user)
-#         request.session.commit()
-#     except IntegrityError:
-#         raise HttpError(409, 'user already exists')
-#     return user
+def add_user(user:User):
+    try:
+        request.session.add(user)
+        request.session.commit()
+    except IntegrityError:
+        raise HttpError(409, 'user already exists')
+    return user
 
-# def get_user(user_id: int):
-#     user = request.session.get(User, user_id)
-#     if user is None:
-#         raise HttpError(404,'user not found')
-#     return user
+def get_user(user_id: int):
+    user = request.session.get(User, user_id)
+    if user is None:
+        raise HttpError(404,'user not found')
+    return user
+
 def add_adv(adv:Advertisement):
     try:
         request.session.add(adv)
@@ -79,13 +80,22 @@ def add_adv(adv:Advertisement):
         raise HttpError(409, 'adv already exists')
     return adv
 
-
-
 def get_adv(adv_id: int):
     adv = request.session.get(Advertisement, adv_id)
     if adv is None:
         raise HttpError(404, 'Advertisement not found')
     return adv
+
+
+
+class UserView(MethodView):
+    def post(self):
+        json_data = validate_json(request.json, CreateUser)
+        json_data['password'] = hash_password(json_data['password'])
+        user = User(**json_data)
+        user = add_user(user)
+        return jsonify({"id": user.id})
+    
 
 class AdvertisementView(MethodView):
     
@@ -93,13 +103,22 @@ class AdvertisementView(MethodView):
         adv = get_adv(adv_id)
         return jsonify(adv.json)
     
+    # def post(self):
+    #     json_data = validate_json(request.json, CreateAdvertisement)
+    #     json_data['password'] = hash_password(json_data['password'])
+    #     json_data["owner"] = user.id
+    #     adv = Advertisement(**json_data)
+    #     adv = add_adv(adv)
+    #     return jsonify({"id": adv.id})
     def post(self):
         json_data = validate_json(request.json, CreateAdvertisement)
-        # json_data['password'] = hash_password(json_data['password'])
+        # Предполагаем, что user_id передается в запросе
+        user_id = json_data.pop("owner_id")
         adv = Advertisement(**json_data)
+        adv.owner_id = user_id  # Добавьте owner_id к объявлению
         adv = add_adv(adv)
         return jsonify({"id": adv.id})
-
+    
     def patch(self, adv_id):
         json_data = validate_json(request.json, UpdateAdvertisement)
         # if "password" in json_data:
@@ -118,9 +137,10 @@ class AdvertisementView(MethodView):
     
     
 adv_view = AdvertisementView.as_view('adv')
+user_view = UserView.as_view('user')
 
 app.add_url_rule('/adv/', view_func=adv_view, methods=['POST'])
 app.add_url_rule('/adv/<int:adv_id>', view_func=adv_view, methods=['GET', 'PATCH', 'DELETE'])
-
+app.add_url_rule('/user/', view_func=user_view, methods=['POST'])
 app.run()
 
