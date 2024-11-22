@@ -1,0 +1,48 @@
+from fastapi import HTTPException
+from sqlalchemy import and_, select
+from models import ORM_CLS, ORM_OBJECT, Advertisement
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+
+async def add_item(session: AsyncSession, item: ORM_OBJECT) -> ORM_OBJECT:
+    session.add(item)
+    try:
+        await session.commit()
+    except IntegrityError as err:
+        if err.orig.pgcode == "23505":
+            raise HTTPException(status_code=409, detail="Item already exists")
+        raise err
+    return item
+
+
+async def get_item_qs(session: AsyncSession, title: str = None, description: str = None, price: str = None, author: str = None):
+    query = select(Advertisement)
+    filters = []
+    if title:
+        filters.append(Advertisement.title.ilike(f"%{title}%"))
+    if description:
+        filters.append(Advertisement.description.ilike(f"%{description}%"))
+    if price:
+        filters.append(Advertisement.price == price)
+    if author:
+        filters.append(Advertisement.author.ilike(f"%{author}%"))
+
+    if filters:
+        query = query.where(and_(*filters))
+
+    result = await session.execute(query)
+    return result.scalars().all()
+
+
+async def get_item(session: AsyncSession, orm_cls: ORM_CLS, item_id: int) -> ORM_OBJECT:
+    orm_obj = await session.get(orm_cls, item_id)
+    if orm_obj is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return orm_obj
+
+
+async def delete_item(session: AsyncSession, orm_cls: ORM_CLS, item_id) -> None:
+    orm_obj = await get_item(session, orm_cls, item_id)
+    await session.delete(orm_obj)
+    await session.commit()
